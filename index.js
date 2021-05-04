@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const redis = require("redis");
 let RedisStore = require("connect-redis")(session);
+const cors = require('cors');
 
 const {
   MONGO_IP,
@@ -41,7 +42,8 @@ const connectWithRetry = () => {
 };
 
 connectWithRetry();
-
+app.use(cors({}));
+app.enable("trust proxy");
 app.use(
   session({
     store: new RedisStore({ client: redisClient }),
@@ -58,8 +60,9 @@ app.use(
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
+app.get("/api/v1", (req, res) => {
   res.send("<h2>Hi there</h2>");
+  console.log("yeah it ran");
 });
 
 app.use("/api/v1/posts", postRouter);
